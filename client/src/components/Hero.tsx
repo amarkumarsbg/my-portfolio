@@ -24,9 +24,11 @@ export function Hero() {
     }
 
     if (deleting && text === '') {
-      setDeleting(false)
-      setRoleIndex((prev) => (prev + 1) % roles.length)
-      return
+      const next = setTimeout(() => {
+        setDeleting(false)
+        setRoleIndex((prev) => (prev + 1) % roles.length)
+      }, 0)
+      return () => clearTimeout(next)
     }
 
     const speed = deleting ? 40 : 80
