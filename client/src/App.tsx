@@ -10,6 +10,7 @@ import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 import { BackToTop } from './components/BackToTop'
 import { Preloader } from './components/Preloader'
+import { ChatWidget } from './components/ChatWidget'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       </main>
       <Footer />
       <BackToTop />
+      <ChatWidget />
     </>
   )
 }

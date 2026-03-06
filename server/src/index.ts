@@ -1,9 +1,16 @@
-import 'dotenv/config'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: path.join(__dirname, '..', '.env') })
+
 import express from 'express'
 import cors from 'cors'
 import { connectDB, isConnected } from './config/db.js'
 import { projectsRouter } from './routes/projects.js'
 import { contactRouter } from './routes/contact.js'
+import { chatRouter } from './routes/chat.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 5000
@@ -44,6 +51,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/projects', projectsRouter)
 app.use('/api/contact', contactRouter)
+app.use('/api/chat', chatRouter)
 
 async function start() {
   await connectDB()
