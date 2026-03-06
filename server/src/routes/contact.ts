@@ -44,7 +44,7 @@ function sendEmailBackground(name: string, email: string, message: string) {
       `,
     })
     .then(() =>
-      console.log(`Email sent via Resend to ${process.env.GMAIL_USER}`)
+      console.info(`Email sent via Resend to ${process.env.GMAIL_USER}`)
     )
     .catch((err: Error) => console.error('Email send failed:', err.message))
 }

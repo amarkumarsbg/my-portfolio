@@ -18,7 +18,7 @@ Run through this checklist when asked to do a "code cleanup" or "code cleanup fo
 - Re-use existing components; create shared/common components for repeated UI patterns
 - Maintain consistency in code structure and naming conventions
 - Keep code clean, readable, and no more complex than necessary
-- No inline styles — use Tailwind CSS for all styling
+- Prefer CSS classes (index.css) over inline styles; use inline only for dynamic values (e.g. gradients)
 - Follow the existing component structure and folder organization
 - Ensure proper error handling and validation where applicable
 - Remove unused imports, variables, and console logs before finishing any task

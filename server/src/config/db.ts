@@ -14,7 +14,7 @@ export async function connectDB(): Promise<void> {
   }
   try {
     await mongoose.connect(uri)
-    console.log('MongoDB connected')
+    console.info('MongoDB connected')
   } catch (error) {
     console.error('MongoDB connection error:', error)
     console.warn('Server will run without DB - /api/projects returns []')

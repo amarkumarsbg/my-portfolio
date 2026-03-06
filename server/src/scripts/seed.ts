@@ -80,7 +80,7 @@ async function seed() {
   await mongoose.connect(uri)
   await ProjectModel.deleteMany({})
   await ProjectModel.insertMany(sampleProjects)
-  console.log('Seeded', sampleProjects.length, 'projects')
+  console.info('Seeded', sampleProjects.length, 'projects')
   await mongoose.disconnect()
 }
 
