@@ -3,55 +3,102 @@ import type { Project } from '../types/project'
 export const dummyProjects: Project[] = [
   {
     _id: '1',
-    title: 'E-Commerce Store',
+    title: 'MERN Blog',
     description:
-      'Full-stack online store with cart, checkout, and user authentication. Built with React and Node.js.',
-    imageUrl: 'https://placehold.co/600x400/1a1a2e/eee?text=E-Commerce',
-    liveUrl: 'https://example.com',
-    repoUrl: 'https://github.com',
-    techStack: ['React', 'Node.js', 'MongoDB', 'Stripe'],
+      'Full-stack blogging platform with user authentication, CRUD operations, and a clean UI built with Tailwind CSS.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=400&fit=crop',
+    liveUrl: '',
+    repoUrl: 'https://github.com/amarkumarsbg/mern-blog',
+    techStack: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS'],
     order: 0,
   },
   {
     _id: '2',
-    title: 'Task Management App',
+    title: 'Chat App',
     description:
-      'Kanban-style task board with drag-and-drop. Real-time updates and team collaboration features.',
-    imageUrl: 'https://placehold.co/600x400/16213e/eee?text=Task+App',
-    liveUrl: 'https://example.com',
-    repoUrl: 'https://github.com',
-    techStack: ['React', 'TypeScript', 'Firebase'],
+      'Real-time messaging application with user authentication, online status, and instant message delivery.',
+    imageUrl:
+      'https://plus.unsplash.com/premium_vector-1724612296564-45d0558558f5?q=80&w=600&h=400&fit=crop',
+    liveUrl: 'https://chat-app-50ne.onrender.com/',
+    repoUrl: 'https://github.com/amarkumarsbg/chat-app',
+    techStack: ['React', 'Node.js', 'Socket.io', 'MongoDB'],
     order: 1,
   },
   {
     _id: '3',
-    title: 'Weather Dashboard',
+    title: 'Movix',
     description:
-      'Clean weather app with forecasts, maps, and multiple city support. Uses OpenWeather API.',
-    imageUrl: 'https://placehold.co/600x400/0f3460/eee?text=Weather',
-    liveUrl: 'https://example.com',
-    repoUrl: 'https://github.com',
-    techStack: ['React', 'API', 'Tailwind CSS'],
+      'Movie discovery app with search, trending films, trailers, and detailed info powered by TMDB API.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&h=400&fit=crop',
+    liveUrl: '',
+    repoUrl: 'https://github.com/amarkumarsbg/movix',
+    techStack: ['React', 'Redux', 'TMDB API', 'CSS'],
     order: 2,
+  },
+  {
+    _id: '4',
+    title: 'Food Delivery',
+    description:
+      'Online food ordering platform with cart management, order tracking, and a responsive storefront.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop',
+    liveUrl: '',
+    repoUrl: 'https://github.com/amarkumarsbg/food-del',
+    techStack: ['React', 'Node.js', 'MongoDB', 'Express'],
+    order: 3,
+  },
+  {
+    _id: '5',
+    title: 'Netflix Clone',
+    description:
+      'A Netflix-inspired streaming UI with movie browsing, trailers, and responsive design deployed on Vercel.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&h=400&fit=crop',
+    liveUrl: 'https://netflix-clone-three-flax.vercel.app',
+    repoUrl: 'https://github.com/amarkumarsbg/netflix-clone',
+    techStack: ['React', 'TMDB API', 'CSS'],
+    order: 4,
+  },
+  {
+    _id: '6',
+    title: 'Gemini Clone',
+    description:
+      'A Google Gemini AI clone with conversational interface and AI-powered responses.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop',
+    liveUrl: 'https://gemini-clone-five.vercel.app',
+    repoUrl: 'https://github.com/amarkumarsbg/gemini-clone',
+    techStack: ['React', 'AI', 'API', 'JavaScript'],
+    order: 5,
   },
 ]
 
 export const dummySkills = [
   'React',
+  'Next.js',
   'TypeScript',
   'Node.js',
   'Express',
   'MongoDB',
-  'Git',
+  'Redux',
+  'Socket.io',
+  'Tailwind CSS',
+  'Docker',
+  'AWS',
+  'GraphQL',
   'REST APIs',
-  'HTML/CSS',
+  'Git',
+  'React Native',
+  'AI',
 ]
 
 export const dummyAbout = {
-  name: 'Your Name',
+  name: 'Amar',
   title: 'Full Stack Developer',
   bio: 'Passionate about building clean, efficient web applications. I enjoy turning complex problems into simple solutions through code.',
-  email: 'your.email@example.com',
-  github: 'https://github.com',
-  linkedin: 'https://linkedin.com',
+  email: 'amarkumarsbg13@gmail.com',
+  github: 'https://github.com/amarkumarsbg',
+  linkedin: 'https://www.linkedin.com/in/amarkumarsbg/',
 }

@@ -1,0 +1,16 @@
+{
+  "name": "Amar Dev — Full Stack Developer",
+  "short_name": "Amar Dev",
+  "description": "Portfolio of Amar, a Full Stack Developer with 4+ years of experience.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
