@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import { connectDB } from './config/db.js'
+import { connectDB, isConnected } from './config/db.js'
 import { projectsRouter } from './routes/projects.js'
 import { contactRouter } from './routes/contact.js'
 
@@ -35,7 +35,11 @@ app.get('/', (_req, res) => {
 })
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', message: 'Portfolio API running' })
+  res.json({
+    status: 'ok',
+    message: 'Portfolio API running',
+    db: isConnected() ? 'connected' : 'disconnected',
+  })
 })
 
 app.use('/api/projects', projectsRouter)
