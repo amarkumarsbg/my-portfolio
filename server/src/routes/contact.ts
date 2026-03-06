@@ -1,28 +1,22 @@
 import { Router } from 'express'
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 import { ContactModel } from '../models/Contact.js'
 import { isConnected } from '../config/db.js'
 
 export const contactRouter = Router()
 
 function sendEmailBackground(name: string, email: string, message: string) {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    console.warn('Email skipped: GMAIL_USER or GMAIL_APP_PASSWORD not set')
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('Email skipped: RESEND_API_KEY not set in environment')
     return
   }
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  })
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
-  transporter
-    .sendMail({
-      from: `"Portfolio Contact" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
+  resend.emails
+    .send({
+      from: 'Portfolio Contact <onboarding@resend.dev>',
+      to: process.env.GMAIL_USER ?? 'amarkumarsbg13@gmail.com',
       replyTo: email,
       subject: `New message from ${name} — Portfolio`,
       html: `
@@ -49,7 +43,9 @@ function sendEmailBackground(name: string, email: string, message: string) {
         </div>
       `,
     })
-    .then(() => console.log(`Email sent to ${process.env.GMAIL_USER}`))
+    .then(() =>
+      console.log(`Email sent via Resend to ${process.env.GMAIL_USER}`)
+    )
     .catch((err: Error) => console.error('Email send failed:', err.message))
 }
 
@@ -66,13 +62,12 @@ contactRouter.post('/', async (req, res) => {
       return
     }
 
-    // Save to MongoDB
     const contact = await ContactModel.create({ name, email, message })
 
     // Respond immediately — email sends in background
     res.status(201).json(contact)
 
-    // Fire and forget — does not delay the response
+    // Fire and forget
     sendEmailBackground(name, email, message)
   } catch {
     res.status(500).json({ error: 'Failed to save message' })
