@@ -1,0 +1,99 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, develop]
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Install & build client
+        run: npm ci && npm run build
+        working-directory: client
+
+      - name: Install & build server
+        run: npm ci && npm run build
+        working-directory: server
+
+      # -------------------------------------------------------
+      # Add your staging deployment steps below.
+      # Examples for popular platforms:
+      #
+      # Vercel:
+      #   - uses: amondnet/vercel-action@v25
+      #     with:
+      #       vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #       vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #       vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #
+      # Render (trigger deploy hook):
+      #   - run: curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}"
+      #
+      # Railway:
+      #   - uses: bervProject/railway-deploy@main
+      #     with:
+      #       railway_token: ${{ secrets.RAILWAY_TOKEN }}
+      #       service_name: portfolio-staging
+      # -------------------------------------------------------
+
+      - name: Staging deploy placeholder
+        run: echo "✅ Staging build passed — ready for deployment"
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Install & build client
+        run: npm ci && npm run build
+        working-directory: client
+
+      - name: Install & build server
+        run: npm ci && npm run build
+        working-directory: server
+
+      # -------------------------------------------------------
+      # Add your production deployment steps below.
+      # Same pattern as staging, but using production secrets.
+      #
+      # Vercel:
+      #   - uses: amondnet/vercel-action@v25
+      #     with:
+      #       vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #       vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #       vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #       vercel-args: '--prod'
+      #
+      # Render (trigger deploy hook):
+      #   - run: curl -X POST "${{ secrets.RENDER_PROD_DEPLOY_HOOK }}"
+      # -------------------------------------------------------
+
+      - name: Production deploy placeholder
+        run: echo "✅ Production build passed — ready for deployment"
