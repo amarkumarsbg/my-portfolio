@@ -34,7 +34,11 @@ contactRouter.post('/', async (req, res) => {
     const contact = await ContactModel.create({ name, email, message })
 
     // Send email notification if credentials are configured
-    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+      console.warn(
+        'Email skipped: GMAIL_USER or GMAIL_APP_PASSWORD not set in environment'
+      )
+    } else {
       try {
         const transporter = createTransporter()
         await transporter.sendMail({
@@ -68,6 +72,7 @@ contactRouter.post('/', async (req, res) => {
             </div>
           `,
         })
+        console.log(`Email sent to ${process.env.GMAIL_USER}`)
       } catch (emailErr) {
         // Email failed but message was saved — log but don't fail the request
         console.error('Email send failed:', emailErr)

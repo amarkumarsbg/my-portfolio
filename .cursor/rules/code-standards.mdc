@@ -1,0 +1,24 @@
+---
+description: Code cleanup checklist and general code standards for the project
+alwaysApply: true
+---
+
+# Code Cleanup & Standards
+
+## Code Cleanup Checklist
+
+Run through this checklist when asked to do a "code cleanup" or "code cleanup for staged changes":
+
+- Delete unused imports, variables, functions, and components
+- Check ESLint compliance
+- Verify Prettier/formatting consistency
+
+## Code Standards
+
+- Re-use existing components; create shared/common components for repeated UI patterns
+- Maintain consistency in code structure and naming conventions
+- Keep code clean, readable, and no more complex than necessary
+- No inline styles — use Tailwind CSS for all styling
+- Follow the existing component structure and folder organization
+- Ensure proper error handling and validation where applicable
+- Remove unused imports, variables, and console logs before finishing any task
