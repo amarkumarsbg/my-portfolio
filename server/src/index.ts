@@ -8,18 +8,22 @@ import { contactRouter } from './routes/contact.js'
 const app = express()
 const PORT = process.env.PORT ?? 5000
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://my-portfolio-amarkumarsbg.vercel.app',
-  process.env.CLIENT_URL,
-].filter(Boolean) as string[]
+const allowedOrigins = ['http://localhost:5173', process.env.CLIENT_URL].filter(
+  Boolean
+) as string[]
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (curl, Postman, server-to-server)
+      // Allow requests with no origin (curl, Postman, mobile apps)
       if (!origin) return callback(null, true)
-      if (allowedOrigins.includes(origin)) return callback(null, true)
+      // Allow all Vercel preview and production deployments
+      if (origin.endsWith('.vercel.app')) return callback(null, true)
+      // Allow localhost for development
+      if (origin.startsWith('http://localhost')) return callback(null, true)
+      // Allow explicitly configured client URL
+      if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL)
+        return callback(null, true)
       callback(new Error(`CORS: origin ${origin} not allowed`))
     },
     credentials: true,
