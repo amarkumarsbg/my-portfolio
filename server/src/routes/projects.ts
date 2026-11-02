@@ -10,7 +10,9 @@ projectsRouter.get('/', async (_req, res) => {
       res.json([])
       return
     }
-    const projects = await ProjectModel.find().sort({ order: 1 })
+    const projects = await ProjectModel.find({
+      $or: [{ isPublished: true }, { isPublished: { $exists: false } }],
+    }).sort({ order: 1 })
     res.json(projects)
   } catch {
     res.status(500).json({ error: 'Failed to fetch projects' })

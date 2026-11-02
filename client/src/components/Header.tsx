@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useActiveSection } from '../hooks/useActiveSection'
+import { usePortfolioData } from '../context/PortfolioData'
+import { Link } from 'react-router-dom'
 
 const NAV_ITEMS = [
-  { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'about', label: 'About', path: '/about' },
+  { id: 'skills', label: 'Skills', path: '/skills' },
+  { id: 'experience', label: 'Experience', path: '/experience' },
+  { id: 'projects', label: 'Projects', path: '/projects' },
+  { id: 'contact', label: 'Contact', path: '/contact' },
 ]
 
 export function Header() {
+  const { settings } = usePortfolioData()
   const { theme, toggle } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -31,31 +34,32 @@ export function Header() {
   return (
     <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
       <nav className="nav">
-        <a href="#" className="nav-logo">
-          <span className="nav-logo-bracket">&lt;</span>Amar Dev
+        <Link to="/" className="nav-logo">
+          <span className="nav-logo-bracket">&lt;</span>
+          {settings.name} Dev
           <span className="nav-logo-bracket"> /&gt;</span>
-        </a>
+        </Link>
 
         <div className="nav-right">
           <ul className={`nav-links ${menuOpen ? 'nav-links--open' : ''}`}>
             {NAV_ITEMS.map((item) => (
               <li key={item.id}>
-                <a
-                  href={`#${item.id}`}
+                <Link
+                  to={item.path}
                   className={
                     activeSection === item.id ? 'nav-link--active' : ''
                   }
                   onClick={closeMenu}
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
 
-          <a href="#contact" className="nav-cta">
+          <Link to="/contact" className="nav-cta">
             Let&apos;s Talk
-          </a>
+          </Link>
 
           <button
             className="theme-toggle"

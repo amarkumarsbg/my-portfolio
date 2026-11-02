@@ -2,20 +2,22 @@ import { useState } from 'react'
 import { dummyProjects, dummyAbout } from '../data/dummy'
 import { ProjectCard } from './ProjectCard'
 import { useScrollReveal } from '../hooks/useScrollReveal'
-
-const allTechs = [
-  'All',
-  ...Array.from(new Set(dummyProjects.flatMap((p) => p.techStack ?? []))),
-]
+import { usePortfolioData } from '../context/PortfolioData'
 
 export function Projects() {
   const [filter, setFilter] = useState('All')
   const headerRef = useScrollReveal<HTMLDivElement>()
+  const { projects, settings, source } = usePortfolioData()
+  const displayedProjects = source === 'database' ? projects : dummyProjects
+  const allTechs = [
+    'All',
+    ...Array.from(new Set(displayedProjects.flatMap((p) => p.techStack ?? []))),
+  ]
 
   const filtered =
     filter === 'All'
-      ? dummyProjects
-      : dummyProjects.filter((p) => p.techStack?.includes(filter))
+      ? displayedProjects
+      : displayedProjects.filter((p) => p.techStack?.includes(filter))
 
   return (
     <section className="section" id="projects">
@@ -28,7 +30,7 @@ export function Projects() {
           </p>
         </div>
         <a
-          href={dummyAbout.github}
+          href={settings.github || dummyAbout.github}
           target="_blank"
           rel="noreferrer"
           className="projects-view-all"
@@ -77,7 +79,7 @@ export function Projects() {
           75+ repositories on GitHub across full-stack, mobile, and AI projects
         </p>
         <a
-          href={dummyAbout.github}
+          href={settings.github || dummyAbout.github}
           target="_blank"
           rel="noreferrer"
           className="projects-github-btn"

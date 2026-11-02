@@ -1,3 +1,5 @@
+import { resumeSkills } from './resumeSkills.js'
+
 export const portfolioAbout = {
   name: 'Amar',
   title: 'Full Stack Developer',
@@ -8,22 +10,16 @@ export const portfolioAbout = {
 }
 
 export const portfolioSkills = [
-  'React',
-  'Next.js',
-  'TypeScript',
-  'Node.js',
-  'Express',
-  'MongoDB',
+  ...resumeSkills.map((skill) => skill.name),
   'Redux',
   'Socket.io',
-  'Tailwind CSS',
   'Docker',
-  'AWS',
   'GraphQL',
-  'REST APIs',
-  'Git',
   'React Native',
   'AI',
+  'Gemini',
+  'LangChain',
+  'Prompt Eng.',
 ]
 
 export function buildRAGContext(
@@ -33,7 +29,16 @@ export function buildRAGContext(
     techStack: string[]
     liveUrl?: string
     repoUrl?: string
-  }[]
+  }[],
+  about = portfolioAbout,
+  skills: string[] = portfolioSkills,
+  experience: {
+    role: string
+    company?: string
+    period?: string
+    description?: string
+    tech?: string[]
+  }[] = []
 ): string {
   const projectsText = projects
     .map(
@@ -42,17 +47,26 @@ export function buildRAGContext(
     )
     .join('\n')
 
+  const experienceText = experience
+    .map(
+      (e) =>
+        `- ${e.role}${e.company ? ` at ${e.company}` : ''}${e.period ? ` (${e.period})` : ''}: ${e.description ?? ''}. Tech: ${(e.tech ?? []).join(', ')}`
+    )
+    .join('\n')
   return `
-## About ${portfolioAbout.name}
-- Title: ${portfolioAbout.title}
-- Bio: ${portfolioAbout.bio}
-- Email: ${portfolioAbout.email}
-- GitHub: ${portfolioAbout.github}
-- LinkedIn: ${portfolioAbout.linkedin}
+## About ${about.name}
+- Title: ${about.title}
+- Bio: ${about.bio}
+- Email: ${about.email}
+- GitHub: ${about.github}
+- LinkedIn: ${about.linkedin}
 - Experience: 4+ years
 
 ## Skills
-${portfolioSkills.join(', ')}
+${skills.join(', ')}
+
+## Experience
+${experienceText}
 
 ## Projects
 ${projectsText}

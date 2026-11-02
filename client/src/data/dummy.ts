@@ -2,6 +2,47 @@ import type { Project } from '../types/project'
 
 export const dummyProjects: Project[] = [
   {
+    _id: 'featured-mydetailos',
+    title: 'MyDetailOS — Workshop Management Platform',
+    description:
+      'A workshop platform connecting bookings, inspections, job cards, inventory, billing, staff workflows, and a customer portal.',
+    imageUrl: '/projects/mydetailos-overview.png',
+    liveUrl: 'https://www.mydetailos.com/',
+    repoUrl: '',
+    techStack: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'Tailwind CSS',
+      'Node.js',
+      'Express',
+      'PostgreSQL',
+      'Prisma',
+    ],
+    order: 0,
+  },
+  {
+    _id: 'featured-sk-academy',
+    title: 'SK Academy — School Management System',
+    description:
+      'A full-stack school platform pairing a public admissions and information site with a staff portal for site content, student records, and admission inquiries.',
+    imageUrl:
+      'https://res.cloudinary.com/drlpwb53a/image/upload/v1783538312/sk-academy/images/wduka7m9tzycgatgthmt.jpg',
+    liveUrl: 'https://www.skacademy.net/',
+    repoUrl: '',
+    techStack: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'Tailwind CSS',
+      'Node.js',
+      'Express',
+      'MongoDB',
+      'Mongoose',
+    ],
+    order: 1,
+  },
+  {
     _id: '1',
     title: 'MERN Blog',
     description:

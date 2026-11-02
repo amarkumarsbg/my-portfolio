@@ -1,4 +1,4 @@
-import { dummyAbout } from '../data/dummy'
+import { usePortfolioData } from '../context/PortfolioData'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { useCountUp } from '../hooks/useCountUp'
 
@@ -22,6 +22,7 @@ function AnimatedStat({ stat }: { stat: (typeof stats)[number] }) {
 }
 
 export function About() {
+  const { settings } = usePortfolioData()
   const headerRef = useScrollReveal<HTMLDivElement>()
   const textRef = useScrollReveal<HTMLDivElement>(0.15, 150)
   const imageRef = useScrollReveal<HTMLDivElement>(0.15, 300)
@@ -34,9 +35,9 @@ export function About() {
       <div className="about-grid">
         <div className="about-text" ref={textRef}>
           <p className="about-intro">
-            Hey! I&apos;m <strong>{dummyAbout.name}</strong>, a passionate{' '}
-            <span className="about-highlight">{dummyAbout.title}</span> who
-            loves turning ideas into real-world applications.
+            Hey! I&apos;m <strong>{settings.name}</strong>, a passionate{' '}
+            <span className="about-highlight">{settings.title}</span> who loves
+            turning ideas into real-world applications.
           </p>
           <p>
             I specialize in building full-stack web applications using the MERN
@@ -58,7 +59,7 @@ export function About() {
 
           <div className="about-links">
             <a
-              href="/resume.pdf"
+              href={settings.resumeUrl || '/resume.pdf'}
               download
               className="about-link-btn about-link-btn--primary"
             >
@@ -79,7 +80,7 @@ export function About() {
               Download CV
             </a>
             <a
-              href={dummyAbout.github}
+              href={settings.github}
               target="_blank"
               rel="noreferrer"
               className="about-link-btn"
@@ -95,7 +96,7 @@ export function About() {
               GitHub
             </a>
             <a
-              href={dummyAbout.linkedin}
+              href={settings.linkedin}
               target="_blank"
               rel="noreferrer"
               className="about-link-btn"
@@ -110,7 +111,7 @@ export function About() {
               </svg>
               LinkedIn
             </a>
-            <a href={`mailto:${dummyAbout.email}`} className="about-link-btn">
+            <a href={`mailto:${settings.email}`} className="about-link-btn">
               <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"
@@ -127,8 +128,15 @@ export function About() {
         <div className="about-image-wrapper" ref={imageRef}>
           <div className="about-image-border">
             <img
-              src="https://images.unsplash.com/photo-1607705703571-c5a8695f18f6?w=500&h=600&fit=crop"
-              alt="Developer workspace"
+              src={
+                settings.avatarUrl ||
+                'https://images.unsplash.com/photo-1607705703571-c5a8695f18f6?w=500&h=600&fit=crop'
+              }
+              alt={
+                settings.avatarUrl
+                  ? `${settings.name} portrait`
+                  : 'Developer workspace'
+              }
               className="about-image"
             />
           </div>

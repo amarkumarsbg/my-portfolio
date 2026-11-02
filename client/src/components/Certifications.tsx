@@ -1,4 +1,5 @@
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { usePortfolioData } from '../context/PortfolioData'
 
 const certifications = [
   {
@@ -41,6 +42,16 @@ const certifications = [
 
 export function Certifications() {
   const headerRef = useScrollReveal<HTMLDivElement>()
+  const { certifications: cmsCertifications, source } = usePortfolioData()
+  const entries =
+    source === 'database'
+      ? cmsCertifications.map((item) => ({
+          title: String(item.title || ''),
+          issuer: String(item.issuer || ''),
+          year: String(item.year || ''),
+          icon: String(item.iconUrl || ''),
+        }))
+      : certifications
 
   return (
     <section className="section" id="certifications">
@@ -52,7 +63,7 @@ export function Certifications() {
       </div>
 
       <div className="cert-grid">
-        {certifications.map((cert, i) => (
+        {entries.map((cert, i) => (
           <CertCard key={cert.title} cert={cert} index={i} />
         ))}
       </div>

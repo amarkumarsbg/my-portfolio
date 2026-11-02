@@ -1,23 +1,25 @@
-import { dummyAbout } from '../data/dummy'
+import { usePortfolioData } from '../context/PortfolioData'
+import { Link } from 'react-router-dom'
 
 const footerLinks = {
   explore: [
-    { label: 'About', href: '#about' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Skills', href: '#skills' },
+    { label: 'About', to: '/about' },
+    { label: 'Projects', to: '/projects' },
+    { label: 'Skills', to: '/skills' },
   ],
   connect: [
-    { label: 'Contact', href: '#contact' },
-    { label: 'Resume', href: '#' },
-  ],
-  social: [
-    { label: 'LinkedIn', href: dummyAbout.linkedin, icon: 'linkedin' },
-    { label: 'GitHub', href: dummyAbout.github, icon: 'github' },
-    { label: 'Email', href: `mailto:${dummyAbout.email}`, icon: 'email' },
+    { label: 'Contact', to: '/contact' },
+    { label: 'Resume', to: '' },
   ],
 }
 
 export function Footer() {
+  const { settings } = usePortfolioData()
+  const socialLinks = [
+    { label: 'LinkedIn', href: settings.linkedin, icon: 'linkedin' },
+    { label: 'GitHub', href: settings.github, icon: 'github' },
+    { label: 'Email', href: `mailto:${settings.email}`, icon: 'email' },
+  ]
   return (
     <footer className="footer">
       <div className="footer-grid">
@@ -26,7 +28,7 @@ export function Footer() {
           <ul>
             {footerLinks.explore.map((link) => (
               <li key={link.label}>
-                <a href={link.href}>{link.label}</a>
+                <Link to={link.to}>{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -37,7 +39,11 @@ export function Footer() {
           <ul>
             {footerLinks.connect.map((link) => (
               <li key={link.label}>
-                <a href={link.href}>{link.label}</a>
+                {link.label === 'Resume' ? (
+                  <a href={settings.resumeUrl || '/resume.pdf'}>{link.label}</a>
+                ) : (
+                  <Link to={link.to}>{link.label}</Link>
+                )}
               </li>
             ))}
           </ul>
@@ -47,16 +53,16 @@ export function Footer() {
           <h4>Contact</h4>
           <ul>
             <li>
-              <a href={`mailto:${dummyAbout.email}`}>Contact Me</a>
+              <a href={`mailto:${settings.email}`}>Contact Me</a>
             </li>
             <li>
-              <a href="#contact">FAQ</a>
+              <Link to="/contact">FAQ</Link>
             </li>
           </ul>
         </div>
       </div>
       <div className="footer-social">
-        {footerLinks.social.map((item) => (
+        {socialLinks.map((item) => (
           <a
             key={item.label}
             href={item.href}
@@ -99,7 +105,7 @@ export function Footer() {
       </div>
       <div className="footer-bottom">
         <p>
-          © {new Date().getFullYear()} {dummyAbout.name}. All rights reserved.
+          © {new Date().getFullYear()} {settings.name}. All rights reserved.
         </p>
       </div>
     </footer>

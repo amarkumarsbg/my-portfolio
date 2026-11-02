@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Prompt Engineering">
+  <path d="M9 12h46v34H31L19 56v-10H9z" fill="#202938"/>
+  <path d="m21 23 8 6-8 6m14 0h9" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M47 8v8m-4-4h8" stroke="#8e6cff" stroke-width="3" stroke-linecap="round"/>
+</svg>

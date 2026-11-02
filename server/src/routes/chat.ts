@@ -3,10 +3,16 @@ import Groq from 'groq-sdk'
 import { ProjectModel } from '../models/Project.js'
 import { isConnected } from '../config/db.js'
 import { buildRAGContext } from '../data/portfolioContext.js'
+import { fallbackCmsContent } from '../data/cmsFallback.js'
+import {
+  SiteSettingsModel,
+  SkillModel,
+  ExperienceModel,
+} from '../models/CmsContent.js'
 
 export const chatRouter = Router()
 
-const SYSTEM_PROMPT = `You are a friendly AI assistant for Amar's portfolio website. You answer questions about Amar, his skills, experience, and projects. Use ONLY the context below. Be concise (2-4 sentences). If asked something not in the context, say you don't have that information and suggest they use the contact form.`
+const DEFAULT_SYSTEM_PROMPT = `You are a friendly AI assistant for this portfolio website. Answer questions about the owner's skills, experience, and projects using only the supplied context. Be concise (2-4 sentences). If asked about something outside the context, say you do not have that information and suggest the contact form.`
 
 chatRouter.post('/', async (req, res) => {
   try {
@@ -30,7 +36,6 @@ chatRouter.post('/', async (req, res) => {
       return
     }
 
-    // Build RAG context: fetch projects from DB if connected, else use fallback
     let projects: {
       title: string
       description: string
@@ -38,8 +43,28 @@ chatRouter.post('/', async (req, res) => {
       liveUrl?: string
       repoUrl?: string
     }[] = []
+    let settings: typeof fallbackCmsContent.settings =
+      fallbackCmsContent.settings
+    let skills = fallbackCmsContent.skills.map((skill) => skill.name)
+    let experience: {
+      role: string
+      company?: string
+      period?: string
+      description?: string
+      tech?: string[]
+    }[] = fallbackCmsContent.experience
     if (isConnected()) {
-      const docs = await ProjectModel.find().sort({ order: 1 }).lean()
+      const [docs, savedSettings, savedSkills, savedExperience] =
+        await Promise.all([
+          ProjectModel.find({
+            $or: [{ isPublished: true }, { isPublished: { $exists: false } }],
+          })
+            .sort({ order: 1 })
+            .lean(),
+          SiteSettingsModel.findOne({ key: 'site' }).lean(),
+          SkillModel.find({ isPublished: true }).sort({ order: 1 }).lean(),
+          ExperienceModel.find({ isPublished: true }).sort({ order: 1 }).lean(),
+        ])
       projects = docs.map((d) => ({
         title: d.title,
         description: d.description,
@@ -47,6 +72,28 @@ chatRouter.post('/', async (req, res) => {
         liveUrl: d.liveUrl,
         repoUrl: d.repoUrl,
       }))
+      if (savedSettings) {
+        settings = {
+          ...settings,
+          name: String(savedSettings.name ?? settings.name),
+          title: String(savedSettings.title ?? settings.title),
+          bio: String(savedSettings.bio ?? settings.bio),
+          email: String(savedSettings.email ?? settings.email),
+          github: String(savedSettings.github ?? settings.github),
+          linkedin: String(savedSettings.linkedin ?? settings.linkedin),
+          chatbotSystemPrompt: String(savedSettings.chatbotSystemPrompt ?? ''),
+        }
+      }
+      if (savedSkills.length)
+        skills = savedSkills.map((skill) => String(skill.name ?? ''))
+      if (savedExperience.length)
+        experience = savedExperience.map((item) => ({
+          role: String(item.role ?? ''),
+          company: String(item.company ?? ''),
+          period: String(item.period ?? ''),
+          description: String(item.description ?? ''),
+          tech: Array.isArray(item.tech) ? item.tech.map(String) : [],
+        }))
     } else {
       projects = [
         {
@@ -91,13 +138,19 @@ chatRouter.post('/', async (req, res) => {
       ]
     }
 
-    const context = buildRAGContext(projects)
-    const prompt = `${SYSTEM_PROMPT}\n\n## Context\n${context}\n\n## User question\n${trimmed}`
-
+    const context = buildRAGContext(projects, settings, skills, experience)
+    const systemPrompt =
+      settings.chatbotSystemPrompt?.trim() || DEFAULT_SYSTEM_PROMPT
     const groq = new Groq({ apiKey })
     const completion = await groq.chat.completions.create({
       model: 'llama-3.1-8b-instant',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        {
+          role: 'system',
+          content: `${systemPrompt}\n\nUse the following portfolio context as your only source of facts:\n${context}`,
+        },
+        { role: 'user', content: trimmed },
+      ],
       max_tokens: 256,
     })
 

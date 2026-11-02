@@ -1,4 +1,6 @@
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { Link } from 'react-router-dom'
+import { usePortfolioData } from '../context/PortfolioData'
 
 const articles = [
   {
@@ -32,6 +34,19 @@ const articles = [
 
 export function Blog() {
   const headerRef = useScrollReveal<HTMLDivElement>()
+  const { blog: cmsBlog, source } = usePortfolioData()
+  const entries =
+    source === 'database'
+      ? cmsBlog.map((item) => ({
+          title: String(item.title || ''),
+          excerpt: String(item.excerpt || ''),
+          date: String(item.date || ''),
+          readTime: String(item.readTime || ''),
+          tag: String(item.tag || ''),
+          slug: String(item.slug || ''),
+          content: String(item.content || ''),
+        }))
+      : articles
 
   return (
     <section className="section" id="blog">
@@ -43,7 +58,7 @@ export function Blog() {
       </div>
 
       <div className="blog-grid">
-        {articles.map((article, i) => (
+        {entries.map((article, i) => (
           <BlogCard key={i} article={article} index={i} />
         ))}
       </div>
@@ -55,7 +70,17 @@ function BlogCard({
   article,
   index,
 }: {
-  article: (typeof articles)[number]
+  article:
+    | (typeof articles)[number]
+    | {
+        title: string
+        excerpt: string
+        date: string
+        readTime: string
+        tag: string
+        slug: string
+        content: string
+      }
   index: number
 }) {
   const ref = useScrollReveal<HTMLElement>(0.15, index * 150)
@@ -83,7 +108,10 @@ function BlogCard({
           </svg>
           {article.readTime}
         </span>
-        <a href={article.link} className="blog-read-link">
+        <Link
+          to={'slug' in article ? `/blog/${article.slug}` : '/blog'}
+          className="blog-read-link"
+        >
           Read More
           <svg
             viewBox="0 0 24 24"
@@ -96,7 +124,7 @@ function BlogCard({
             <line x1="5" y1="12" x2="19" y2="12" />
             <polyline points="12 5 19 12 12 19" />
           </svg>
-        </a>
+        </Link>
       </div>
     </article>
   )

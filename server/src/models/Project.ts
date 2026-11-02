@@ -9,6 +9,8 @@ const projectSchema = new Schema(
     repoUrl: { type: String, default: '' },
     techStack: [{ type: String }],
     order: { type: Number, default: 0 },
+    isPublished: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: true },
   },
   { timestamps: true }
 )

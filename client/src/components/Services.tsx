@@ -1,4 +1,6 @@
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { usePortfolioData } from '../context/PortfolioData'
+import type { ReactNode } from 'react'
 
 const services = [
   {
@@ -131,6 +133,18 @@ const services = [
 
 export function Services() {
   const headerRef = useScrollReveal<HTMLDivElement>()
+  const { services: cmsServices, source } = usePortfolioData()
+  const displayedServices =
+    source === 'database'
+      ? cmsServices.map((service) => {
+          const title = String(service.title || '')
+          return {
+            title,
+            description: String(service.description || ''),
+            icon: services.find((item) => item.title === title)?.icon ?? null,
+          }
+        })
+      : services
 
   return (
     <section className="section" id="services">
@@ -142,7 +156,7 @@ export function Services() {
       </div>
 
       <div className="services-grid">
-        {services.map((service, i) => (
+        {displayedServices.map((service, i) => (
           <ServiceCard key={service.title} service={service} index={i} />
         ))}
       </div>
@@ -154,14 +168,16 @@ function ServiceCard({
   service,
   index,
 }: {
-  service: (typeof services)[number]
+  service: { title: string; description: string; icon: ReactNode }
   index: number
 }) {
   const ref = useScrollReveal<HTMLDivElement>(0.15, index * 120)
 
   return (
     <div className="service-card" ref={ref}>
-      <div className="service-icon">{service.icon}</div>
+      <div className="service-icon">
+        {service.icon ?? <span aria-hidden="true">✦</span>}
+      </div>
       <h3 className="service-title">{service.title}</h3>
       <p className="service-desc">{service.description}</p>
     </div>

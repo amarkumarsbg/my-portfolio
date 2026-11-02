@@ -21,6 +21,19 @@ export function useTheme() {
     localStorage.setItem(STORAGE_KEY, theme)
   }, [theme])
 
+  useEffect(() => {
+    function syncTheme(event: StorageEvent) {
+      if (
+        event.key === STORAGE_KEY &&
+        (event.newValue === 'dark' || event.newValue === 'light')
+      ) {
+        setTheme(event.newValue)
+      }
+    }
+    window.addEventListener('storage', syncTheme)
+    return () => window.removeEventListener('storage', syncTheme)
+  }, [])
+
   const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
 
   return { theme, toggle } as const

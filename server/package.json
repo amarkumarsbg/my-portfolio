@@ -11,22 +11,32 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "seed": "tsx src/scripts/seed.ts"
+    "seed": "tsx src/scripts/seed.ts",
+    "seed:cms": "tsx src/scripts/seedCms.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.2",
     "groq-sdk": "^0.37.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.23.0",
+    "multer": "^2.5.0",
     "nodemailer": "^8.0.1",
     "resend": "^6.9.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.3.0",
     "@types/node": "^25.3.0",
     "@types/nodemailer": "^7.0.11",
     "@typescript-eslint/eslint-plugin": "^8.56.0",

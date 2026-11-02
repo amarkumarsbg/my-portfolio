@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { usePortfolioData } from '../context/PortfolioData'
 
 const testimonials = [
   {
@@ -24,8 +25,25 @@ const testimonials = [
 
 export function Testimonials() {
   const [active, setActive] = useState(0)
+  const { testimonials: cmsTestimonials, source } = usePortfolioData()
+  const entries =
+    source === 'database'
+      ? cmsTestimonials.map((item) => ({
+          name: String(item.name || ''),
+          role: String(item.role || ''),
+          text: String(item.text || ''),
+          avatar: String(
+            item.avatar ||
+              String(item.name || '')
+                .slice(0, 2)
+                .toUpperCase()
+          ),
+        }))
+      : testimonials
+  const current = entries[active] ?? entries[0]
   const headerRef = useScrollReveal<HTMLDivElement>()
   const cardRef = useScrollReveal<HTMLDivElement>(0.15, 200)
+  if (!current) return null
 
   return (
     <section className="section" id="testimonials">
@@ -48,20 +66,18 @@ export function Testimonials() {
           >
             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
           </svg>
-          <p className="testimonial-text">{testimonials[active].text}</p>
+          <p className="testimonial-text">{current.text}</p>
           <div className="testimonial-author">
-            <div className="testimonial-avatar">
-              {testimonials[active].avatar}
-            </div>
+            <div className="testimonial-avatar">{current.avatar}</div>
             <div>
-              <p className="testimonial-name">{testimonials[active].name}</p>
-              <p className="testimonial-role">{testimonials[active].role}</p>
+              <p className="testimonial-name">{current.name}</p>
+              <p className="testimonial-role">{current.role}</p>
             </div>
           </div>
         </div>
 
         <div className="testimonial-dots">
-          {testimonials.map((_, i) => (
+          {entries.map((_, i) => (
             <button
               key={i}
               className={`testimonial-dot ${i === active ? 'testimonial-dot--active' : ''}`}

@@ -6,10 +6,10 @@ Two-stage workflow: **Staging** (test) → **Production** (live).
 
 ## Branch Strategy
 
-| Branch | Stage | Use for |
-|--------|-------|---------|
-| `develop` | Staging | Testing changes, preview before release |
-| `main` | Production | Live site, stable code |
+| Branch    | Stage      | Use for                                 |
+| --------- | ---------- | --------------------------------------- |
+| `develop` | Staging    | Testing changes, preview before release |
+| `main`    | Production | Live site, stable code                  |
 
 ---
 
@@ -54,31 +54,31 @@ git push origin main
 
 ### Client (Frontend)
 
-| Var | Staging | Production |
-|-----|---------|------------|
+| Var            | Staging                     | Production                      |
+| -------------- | --------------------------- | ------------------------------- |
 | `VITE_API_URL` | `/api` (or staging API URL) | `https://your-api.onrender.com` |
 
-- **Local dev**: Uses `.env.development` (API proxy to localhost:5000)
+- **Local dev**: Uses `.env.development` (API proxy to localhost:5001)
 - **Staging deploy**: Set `VITE_API_URL` in Vercel Preview env
 - **Production deploy**: Set `VITE_API_URL` in Vercel Production env
 
 ### Server (Backend)
 
-| Var | Staging | Production |
-|-----|---------|------------|
-| `MONGODB_URI` | Same or separate DB | Production DB |
-| `PORT` | Auto by platform | Auto by platform |
+| Var           | Staging             | Production       |
+| ------------- | ------------------- | ---------------- |
+| `MONGODB_URI` | Same or separate DB | Production DB    |
+| `PORT`        | Auto by platform    | Auto by platform |
 
 ---
 
 ## Quick Reference
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev:client` | Local frontend (staging mode) |
-| `npm run build:staging` | Build client only (for staging) |
-| `npm run build:prod` | Build client + server (full prod) |
-| `npm run build` | Same as build:prod |
+| Command                 | Description                       |
+| ----------------------- | --------------------------------- |
+| `npm run dev:client`    | Local frontend (staging mode)     |
+| `npm run build:staging` | Build client only (for staging)   |
+| `npm run build:prod`    | Build client + server (full prod) |
+| `npm run build`         | Same as build:prod                |
 
 ---
 

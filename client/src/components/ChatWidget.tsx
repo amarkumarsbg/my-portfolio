@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { config } from '../config/env'
+import { usePortfolioData } from '../context/PortfolioData'
 
 type Message = { role: 'user' | 'assistant'; content: string }
 
@@ -7,6 +8,8 @@ const WELCOME =
   "Hi! I'm Amar's AI assistant. Ask me anything about his experience, skills, projects, or how to get in touch."
 
 export function ChatWidget() {
+  const { settings } = usePortfolioData()
+  const welcome = settings.chatbotWelcomeMessage || WELCOME
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: WELCOME },
@@ -14,6 +17,14 @@ export function ChatWidget() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setMessages((current) =>
+      current.length === 1 && current[0].role === 'assistant'
+        ? [{ role: 'assistant', content: welcome }]
+        : current
+    )
+  }, [welcome])
 
   useEffect(() => {
     if (open && listRef.current) {

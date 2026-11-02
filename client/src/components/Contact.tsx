@@ -2,6 +2,7 @@ import { useState, useCallback, type FormEvent } from 'react'
 import { dummyAbout } from '../data/dummy'
 import { config } from '../config/env'
 import { Toast } from './Toast'
+import { usePortfolioData } from '../context/PortfolioData'
 
 const contactMethods = [
   {
@@ -53,6 +54,7 @@ type ToastState = {
 }
 
 export function Contact() {
+  const { settings } = usePortfolioData()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -181,21 +183,31 @@ export function Contact() {
         <div className="contact-sidebar">
           <h3 className="contact-sidebar-title">Or reach out directly</h3>
           <div className="contact-methods">
-            {contactMethods.map((method) => (
-              <a
-                key={method.title}
-                href={method.href}
-                target={method.title !== 'Email' ? '_blank' : undefined}
-                rel={method.title !== 'Email' ? 'noreferrer' : undefined}
-                className="contact-method"
-              >
-                <div className="contact-method-icon">{method.icon}</div>
-                <div>
-                  <p className="contact-method-label">{method.title}</p>
-                  <p className="contact-method-value">{method.value}</p>
-                </div>
-              </a>
-            ))}
+            {contactMethods.map((method) => {
+              const href =
+                method.title === 'Email'
+                  ? `mailto:${settings.email}`
+                  : method.title === 'GitHub'
+                    ? settings.github
+                    : settings.linkedin
+              const value =
+                method.title === 'Email' ? settings.email : method.value
+              return (
+                <a
+                  key={method.title}
+                  href={href}
+                  target={method.title !== 'Email' ? '_blank' : undefined}
+                  rel={method.title !== 'Email' ? 'noreferrer' : undefined}
+                  className="contact-method"
+                >
+                  <div className="contact-method-icon">{method.icon}</div>
+                  <div>
+                    <p className="contact-method-label">{method.title}</p>
+                    <p className="contact-method-value">{value}</p>
+                  </div>
+                </a>
+              )
+            })}
           </div>
         </div>
       </div>

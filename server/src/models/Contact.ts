@@ -5,6 +5,12 @@ const contactSchema = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true },
     message: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['unread', 'read', 'replied', 'archived'],
+      default: 'unread',
+      index: true,
+    },
   },
   { timestamps: true }
 )
