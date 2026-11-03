@@ -3,12 +3,15 @@ import { dummyProjects, dummyAbout } from '../data/dummy'
 import { ProjectCard } from './ProjectCard'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { usePortfolioData } from '../context/PortfolioData'
+import { sortProjectsNewestFirst } from '../data/projectYears'
 
 export function Projects() {
   const [filter, setFilter] = useState('All')
   const headerRef = useScrollReveal<HTMLDivElement>()
   const { projects, settings, source } = usePortfolioData()
-  const displayedProjects = source === 'database' ? projects : dummyProjects
+  const displayedProjects = sortProjectsNewestFirst(
+    source === 'database' ? projects : dummyProjects
+  )
   const allTechs = [
     'All',
     ...Array.from(new Set(displayedProjects.flatMap((p) => p.techStack ?? []))),

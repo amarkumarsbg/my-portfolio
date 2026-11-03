@@ -25,6 +25,7 @@ import { Skills } from './components/Skills'
 import { Blog } from './components/Blog'
 import { BlogArticle } from './components/BlogArticle'
 import { Testimonials } from './components/Testimonials'
+import { ProjectCaseStudy } from './components/ProjectCaseStudy'
 import { PortfolioDataProvider } from './context/PortfolioData'
 import { config } from './config/env'
 import {
@@ -263,9 +264,11 @@ function AdminLayout() {
   const pageLabel =
     pageName === 'admin'
       ? 'Overview'
-      : pageName
-          .replace(/-/g, ' ')
-          .replace(/^./, (letter) => letter.toUpperCase())
+      : pageName === 'inbox'
+        ? 'Contact messages'
+        : pageName
+            .replace(/-/g, ' ')
+            .replace(/^./, (letter) => letter.toUpperCase())
   async function logout() {
     await fetch(`${config.apiUrl}/admin/auth/logout`, {
       method: 'POST',
@@ -331,7 +334,7 @@ function AdminLayout() {
             Blog
           </NavLink>
           <NavLink to="/admin/inbox" onClick={() => setMobileNavOpen(false)}>
-            Inbox
+            Contact messages
           </NavLink>
         </nav>
         <div className="admin-sidebar-bottom">
@@ -380,6 +383,30 @@ function App() {
       <Route
         path="/projects"
         element={<PublicSectionPage section="projects" />}
+      />
+      <Route
+        path="/projects/mydetailos"
+        element={
+          <PortfolioDataProvider>
+            <Header />
+            <ProjectCaseStudy project="mydetailos" />
+            <Footer />
+            <BackToTop />
+            <ChatWidget />
+          </PortfolioDataProvider>
+        }
+      />
+      <Route
+        path="/projects/sk-academy"
+        element={
+          <PortfolioDataProvider>
+            <Header />
+            <ProjectCaseStudy project="sk-academy" />
+            <Footer />
+            <BackToTop />
+            <ChatWidget />
+          </PortfolioDataProvider>
+        }
       />
       <Route
         path="/contact"

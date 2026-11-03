@@ -16,10 +16,11 @@ const DEFAULT_SYSTEM_PROMPT = `You are a friendly AI assistant for this portfoli
 
 chatRouter.post('/', async (req, res) => {
   try {
-    const apiKey = process.env.GROQ_API_KEY
-    if (!apiKey) {
+    const apiKey = process.env.GROQ_API_KEY?.trim()
+    if (!apiKey || /^(your[_ -].*|replace[_ -].*|placeholder)$/i.test(apiKey)) {
       res.status(503).json({
-        error: 'AI chat is not configured. Add GROQ_API_KEY to environment.',
+        error:
+          'AI chat needs a valid Groq API key. Set GROQ_API_KEY in server/.env, then restart the API server.',
       })
       return
     }
@@ -158,9 +159,30 @@ chatRouter.post('/', async (req, res) => {
     const text = (typeof raw === 'string' ? raw : '').trim()
     res.json({ reply: text || 'Sorry, I could not generate a response.' })
   } catch (err) {
-    console.error('Chat error:', err)
+    const status =
+      typeof err === 'object' && err !== null && 'status' in err
+        ? Number(err.status)
+        : 0
+    if (status === 401 || status === 403) {
+      res.status(503).json({
+        error:
+          'The Groq API key was rejected. Check GROQ_API_KEY in server/.env, then restart the API server.',
+      })
+      return
+    }
+    if (status === 429) {
+      res.status(503).json({
+        error: 'The AI assistant is busy right now. Please try again shortly.',
+      })
+      return
+    }
+    console.error(
+      'Chat request failed:',
+      err instanceof Error ? err.message : 'Unknown error'
+    )
     res.status(500).json({
-      error: 'Failed to get AI response. Please try again.',
+      error:
+        'The AI assistant could not reply right now. Please try again shortly.',
     })
   }
 })

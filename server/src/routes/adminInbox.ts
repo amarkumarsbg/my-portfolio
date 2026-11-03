@@ -33,7 +33,7 @@ adminInboxRouter.get('/', async (req, res) => {
   }
   const filter = clauses.length ? { $and: clauses } : {}
   const [messages, unread] = await Promise.all([
-    ContactModel.find(filter).sort({ createdAt: -1 }).limit(100).lean(),
+    ContactModel.find(filter).sort({ createdAt: -1 }).lean(),
     ContactModel.countDocuments({
       $or: [{ status: 'unread' }, { status: { $exists: false } }],
     }),

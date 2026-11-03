@@ -1,4 +1,6 @@
 import type { Project } from '../types/project'
+import { Link } from 'react-router-dom'
+import { getProjectYear } from '../data/projectYears'
 
 const gradients = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -16,10 +18,26 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project, index }: ProjectCardProps) {
   const gradient = gradients[index % gradients.length]
+  const projectYear = getProjectYear(project)
+  let liveHost = ''
+  try {
+    liveHost = project.liveUrl
+      ? new URL(project.liveUrl).hostname.replace(/^www\./, '')
+      : ''
+  } catch {
+    // Ignore malformed optional URLs so one CMS record cannot break the grid.
+  }
+  const caseStudyPath =
+    liveHost === 'mydetailos.com'
+      ? '/projects/mydetailos'
+      : liveHost === 'skacademy.net'
+        ? '/projects/sk-academy'
+        : undefined
 
   return (
     <article className="project-card">
       <div className="project-card-header" style={{ background: gradient }}>
+        <span className="project-year-badge">{projectYear ?? 'Year TBD'}</span>
         {project.imageUrl && (
           <img
             src={project.imageUrl}
@@ -82,6 +100,11 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
               <li key={tech}>{tech}</li>
             ))}
           </ul>
+        )}
+        {caseStudyPath && (
+          <Link className="project-case-study-link" to={caseStudyPath}>
+            View case study <span aria-hidden="true">→</span>
+          </Link>
         )}
       </div>
     </article>

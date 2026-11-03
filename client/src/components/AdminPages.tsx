@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
@@ -803,6 +804,141 @@ type InboxMessage = {
   status: string
   createdAt: string
 }
+
+type AdminDropdownOption = { value: string; label: string }
+
+function AdminDropdown({
+  value,
+  options,
+  label,
+  onChange,
+  compact = false,
+}: {
+  value: string
+  options: AdminDropdownOption[]
+  label: string
+  onChange: (value: string) => void
+  compact?: boolean
+}) {
+  const [open, setOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const selectedIndex = Math.max(
+    0,
+    options.findIndex((option) => option.value === value)
+  )
+
+  useEffect(() => {
+    if (!open) return
+    const closeOutside = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+        triggerRef.current?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', closeOutside)
+    document.addEventListener('keydown', closeOnEscape)
+    optionRefs.current[activeIndex]?.focus()
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [open, activeIndex])
+
+  function moveFocus(nextIndex: number) {
+    const wrapped = (nextIndex + options.length) % options.length
+    setActiveIndex(wrapped)
+    optionRefs.current[wrapped]?.focus()
+  }
+
+  const selected = options[selectedIndex]
+  const menuId = `admin-dropdown-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+  return (
+    <div
+      className={`admin-dropdown ${compact ? 'admin-dropdown--compact' : ''} ${open ? 'admin-dropdown--open' : ''}`}
+      ref={rootRef}
+    >
+      <button
+        ref={triggerRef}
+        type="button"
+        className="admin-dropdown-trigger"
+        role="combobox"
+        aria-label={label}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={menuId}
+        onClick={() => {
+          if (!open) setActiveIndex(selectedIndex)
+          setOpen((current) => !current)
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault()
+            setActiveIndex(selectedIndex)
+            setOpen(true)
+          }
+        }}
+      >
+        <span>{selected?.label}</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="m5 7.5 5 5 5-5" />
+        </svg>
+      </button>
+      {open && (
+        <div
+          className="admin-dropdown-menu"
+          id={menuId}
+          role="listbox"
+          aria-label={label}
+        >
+          {options.map((option, index) => (
+            <button
+              key={option.value}
+              ref={(element) => {
+                optionRefs.current[index] = element
+              }}
+              type="button"
+              className={`admin-dropdown-option ${option.value === value ? 'admin-dropdown-option--selected' : ''}`}
+              role="option"
+              aria-selected={option.value === value}
+              tabIndex={activeIndex === index ? 0 : -1}
+              onFocus={() => setActiveIndex(index)}
+              onClick={() => {
+                onChange(option.value)
+                setOpen(false)
+                triggerRef.current?.focus()
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'ArrowDown') {
+                  event.preventDefault()
+                  moveFocus(index + 1)
+                } else if (event.key === 'ArrowUp') {
+                  event.preventDefault()
+                  moveFocus(index - 1)
+                } else if (event.key === 'Home') {
+                  event.preventDefault()
+                  moveFocus(0)
+                } else if (event.key === 'End') {
+                  event.preventDefault()
+                  moveFocus(options.length - 1)
+                }
+              }}
+            >
+              <span>{option.label}</span>
+              {option.value === value && <span aria-hidden="true">✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function AdminInboxPage() {
   const [messages, setMessages] = useState<InboxMessage[]>([])
   const [status, setStatus] = useState('')
@@ -853,7 +989,8 @@ export function AdminInboxPage() {
     <>
       <div className="admin-eyebrow">CONTACT</div>
       <h1>
-        Inbox <span className="admin-count-pill">{unread} unread</span>
+        Contact messages{' '}
+        <span className="admin-count-pill">{unread} unread</span>
       </h1>
       <p className="admin-subtitle">
         Search and manage messages sent through your portfolio.
@@ -864,17 +1001,26 @@ export function AdminInboxPage() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search name, email, message…"
         />
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">All statuses</option>
-          {['unread', 'read', 'replied', 'archived'].map((item) => (
-            <option key={item}>{item}</option>
-          ))}
-        </select>
+        <AdminDropdown
+          label="Filter messages by status"
+          value={status}
+          onChange={setStatus}
+          options={[
+            { value: '', label: 'All statuses' },
+            ...['unread', 'read', 'replied', 'archived'].map((item) => ({
+              value: item,
+              label: item[0].toUpperCase() + item.slice(1),
+            })),
+          ]}
+        />
       </div>
       {error && <p className="admin-error">{error}</p>}
       <div className="admin-inbox-list">
         {messages.map((message) => (
-          <article className="admin-message-card" key={message._id}>
+          <article
+            className={`admin-message-card ${!message.status || message.status === 'unread' ? 'admin-message-card--unread' : ''}`}
+            key={message._id}
+          >
             <div className="admin-message-heading">
               <div>
                 <h2>{message.name}</h2>
@@ -884,14 +1030,18 @@ export function AdminInboxPage() {
             </div>
             <p className="admin-message-body">{message.message}</p>
             <div className="admin-message-actions">
-              <select
+              <AdminDropdown
+                label={`Message status for ${message.name}`}
                 value={message.status || 'unread'}
-                onChange={(e) => void updateStatus(message._id, e.target.value)}
-              >
-                {['unread', 'read', 'replied', 'archived'].map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
+                onChange={(next) => void updateStatus(message._id, next)}
+                compact
+                options={['unread', 'read', 'replied', 'archived'].map(
+                  (item) => ({
+                    value: item,
+                    label: item[0].toUpperCase() + item.slice(1),
+                  })
+                )}
+              />
               <a
                 className="admin-secondary-button"
                 href={`mailto:${message.email}?subject=${encodeURIComponent('Re: Portfolio message')}`}

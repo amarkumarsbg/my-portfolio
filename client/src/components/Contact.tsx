@@ -59,6 +59,7 @@ export function Contact() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
+  const [formError, setFormError] = useState('')
   const [toast, setToast] = useState<ToastState>({
     visible: false,
     message: '',
@@ -71,6 +72,7 @@ export function Contact() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    setFormError('')
     setSending(true)
 
     try {
@@ -80,8 +82,16 @@ export function Contact() {
         body: JSON.stringify({ name, email, message }),
       })
 
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string }
+        throw new Error(
+          res.status === 503 || data.error === 'Database not connected'
+            ? 'The contact form cannot save messages while the database is offline.'
+            : data.error || 'Could not send your message.'
+        )
+      }
 
+      setFormError('')
       setToast({
         visible: true,
         message: 'Message sent successfully!',
@@ -90,10 +100,15 @@ export function Contact() {
       setName('')
       setEmail('')
       setMessage('')
-    } catch {
+    } catch (error) {
+      const reason =
+        error instanceof Error
+          ? error.message
+          : 'Could not connect to the message service.'
+      setFormError(reason)
       setToast({
         visible: true,
-        message: 'Something went wrong. Please try again.',
+        message: reason,
         type: 'error',
       })
     } finally {
@@ -178,6 +193,16 @@ export function Contact() {
               </>
             )}
           </button>
+          {formError && (
+            <p className="contact-form-error" role="alert">
+              {formError} Send it directly to{' '}
+              <a
+                href={`mailto:${settings.email}?subject=${encodeURIComponent('Portfolio enquiry')}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`}
+              >
+                {settings.email}
+              </a>
+            </p>
+          )}
         </form>
 
         <div className="contact-sidebar">

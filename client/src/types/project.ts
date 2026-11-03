@@ -7,4 +7,6 @@ export interface Project {
   repoUrl?: string
   techStack?: string[]
   order?: number
+  year?: number
+  createdAt?: string
 }

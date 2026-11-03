@@ -84,7 +84,7 @@ publicContentRouter.get('/content', async (_req, res) => {
       'Suvit Fintech Pvt. Ltd.',
     ])
     const databaseExperience = experience.filter(
-      (entry) => !legacyExperienceCompanies.has(entry.company)
+      (entry) => !legacyExperienceCompanies.has(String(entry.company ?? ''))
     )
     const databaseExperienceKeys = new Set(
       databaseExperience.map((entry) => `${entry.company}|${entry.period}`)
@@ -104,14 +104,14 @@ publicContentRouter.get('/content', async (_req, res) => {
       return normalized
     }
     const databaseSkillKeys = new Set(
-      skills.map((skill) => skillKey(skill.name))
+      skills.map((skill) => skillKey(String(skill.name ?? '')))
     )
     const skillsWithResume = [
       ...skills,
       ...fallback.skills.filter(
         (skill) => !databaseSkillKeys.has(skillKey(skill.name))
       ),
-    ].sort((a, b) => a.order - b.order)
+    ].sort((a, b) => Number(a.order) - Number(b.order))
     res.json({
       settings: settings
         ? { ...fallback.settings, ...settings }

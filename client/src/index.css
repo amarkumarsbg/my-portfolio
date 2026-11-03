@@ -780,6 +780,23 @@ main {
   overflow: hidden;
 }
 
+.project-year-badge {
+  position: absolute;
+  z-index: 3;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.76);
+  backdrop-filter: blur(8px);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
 .project-card-image {
   width: 100%;
   height: 100%;
@@ -810,7 +827,7 @@ main {
 .project-card-actions {
   position: absolute;
   top: 0.75rem;
-  right: 0.75rem;
+  left: 0.75rem;
   display: flex;
   gap: 0.5rem;
   opacity: 0;
@@ -881,6 +898,250 @@ main {
   font-weight: 500;
 }
 
+.project-case-study-link {
+  display: inline-flex;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+.project-case-study-link:hover {
+  gap: 0.7rem;
+}
+
+/* Featured project case studies */
+.case-study-page {
+  min-height: 100vh;
+  padding-top: 68px;
+  color: var(--text);
+}
+.case-study-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 650;
+  opacity: 0.75;
+}
+.case-study-back:hover {
+  color: var(--accent);
+  opacity: 1;
+}
+.case-study-content {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 2rem 5rem;
+}
+.case-study-hero {
+  display: grid;
+  grid-template-columns: 1fr 0.95fr;
+  gap: 3rem;
+  align-items: center;
+  padding: 0 0 3rem;
+}
+.case-study-eyebrow {
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  margin: 0 0 1rem;
+}
+.case-study-copy h1 {
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  margin: 0 0 1rem;
+}
+.case-study-copy h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  line-height: 1.35;
+  margin: 0 0 1rem;
+}
+.case-study-summary,
+.case-study-section > p:last-child {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  opacity: 0.76;
+}
+.case-study-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.1rem;
+  margin-top: 1rem;
+  border-radius: 9px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 650;
+  background: var(--accent);
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+.case-study-visit:hover {
+  transform: translateY(-2px);
+  background: var(--accent-hover);
+}
+.case-study-cover {
+  width: 100%;
+  max-height: 350px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.12);
+}
+.case-study-school-art {
+  min-height: 300px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(140deg, #dbeafe, #f8fafc 58%, #c7d2fe);
+}
+.school-art-window {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2rem 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 20px 60px rgba(30, 64, 175, 0.14);
+  color: #172554;
+}
+.school-art-window span {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: #2563eb;
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+.school-art-window b {
+  font-size: 1.5rem;
+}
+.school-art-window i {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-style: normal;
+}
+.school-art-sun {
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  right: -55px;
+  top: -85px;
+  border-radius: 50%;
+  background: rgba(96, 165, 250, 0.25);
+}
+.case-study-section {
+  padding: 2.4rem 0;
+  border-top: 1px solid var(--border);
+}
+.case-study-section h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.65rem, 3vw, 2.2rem);
+  letter-spacing: -0.03em;
+}
+.case-study-section > p:last-child {
+  max-width: 780px;
+  margin-bottom: 0;
+}
+.case-study-workflows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.7rem;
+}
+.case-study-workflow {
+  padding: 1.35rem;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 13px;
+}
+.case-study-workflow span {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+.case-study-workflow h3 {
+  margin: 0.75rem 0 0.4rem;
+  font-size: 1.05rem;
+}
+.case-study-workflow p {
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.72;
+  font-size: 0.92rem;
+}
+.case-study-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+.case-study-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  list-style: none;
+  padding: 0;
+  margin: 1.2rem 0 0;
+}
+.case-study-stack li {
+  padding: 0.45rem 0.7rem;
+  border-radius: 7px;
+  background: var(--tech-bg);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.case-study-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.case-study-footer p {
+  font-size: 1.2rem;
+  font-weight: 650;
+}
+.case-study-footer .case-study-visit {
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .case-study-content {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .case-study-hero,
+  .case-study-bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .case-study-hero {
+    padding: 0 0 2rem;
+  }
+  .case-study-cover {
+    max-height: 260px;
+  }
+  .case-study-workflows {
+    grid-template-columns: 1fr;
+  }
+  .case-study-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
 /* Contact */
 .contact-header {
   text-align: center;
@@ -914,6 +1175,18 @@ main {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 2rem;
+}
+
+.contact-form-error {
+  margin: 0.15rem 0 0;
+  color: #b42318;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.contact-form-error a {
+  color: var(--accent);
+  font-weight: 650;
+  overflow-wrap: anywhere;
 }
 
 .form-group {
