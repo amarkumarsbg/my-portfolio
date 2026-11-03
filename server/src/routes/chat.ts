@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import Groq from 'groq-sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ProjectModel } from '../models/Project.js'
 import { isConnected } from '../config/db.js'
 import { buildRAGContext } from '../data/portfolioContext.js'
@@ -16,11 +16,11 @@ const DEFAULT_SYSTEM_PROMPT = `You are a friendly AI assistant for this portfoli
 
 chatRouter.post('/', async (req, res) => {
   try {
-    const apiKey = process.env.GROQ_API_KEY?.trim()
+    const apiKey = process.env.GEMINI_API_KEY?.trim()
     if (!apiKey || /^(your[_ -].*|replace[_ -].*|placeholder)$/i.test(apiKey)) {
       res.status(503).json({
         error:
-          'AI chat needs a valid Groq API key. Set GROQ_API_KEY in server/.env, then restart the API server.',
+          'AI chat needs a valid Gemini API key. Set GEMINI_API_KEY in server/.env, then restart the API server.',
       })
       return
     }
@@ -142,21 +142,45 @@ chatRouter.post('/', async (req, res) => {
     const context = buildRAGContext(projects, settings, skills, experience)
     const systemPrompt =
       settings.chatbotSystemPrompt?.trim() || DEFAULT_SYSTEM_PROMPT
-    const groq = new Groq({ apiKey })
-    const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
-      messages: [
-        {
-          role: 'system',
-          content: `${systemPrompt}\n\nUse the following portfolio context as your only source of facts:\n${context}`,
-        },
-        { role: 'user', content: trimmed },
-      ],
-      max_tokens: 256,
-    })
+    const genAI = new GoogleGenerativeAI(apiKey)
+    const systemInstruction = `${systemPrompt}\n\nUse the following portfolio context as your only source of facts:\n${context}`
+    const candidateModels = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-3.8-flash',
+    ]
 
-    const raw = completion.choices[0]?.message?.content
-    const text = (typeof raw === 'string' ? raw : '').trim()
+    let text = ''
+    let lastError: unknown = null
+
+    for (const modelName of candidateModels) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          systemInstruction,
+          generationConfig: { maxOutputTokens: 256 },
+        })
+        const completion = await model.generateContent(trimmed)
+        text = completion.response.text().trim()
+        if (text) break
+      } catch (err) {
+        lastError = err
+        const status =
+          typeof err === 'object' && err !== null && 'status' in err
+            ? Number(err.status)
+            : 0
+        // If credentials are bad, trying other models won't help
+        if (status === 401 || status === 403) break
+        // For 503 / 429 / overloaded models, try the next candidate
+        continue
+      }
+    }
+
+    if (!text && lastError) {
+      throw lastError
+    }
+
     res.json({ reply: text || 'Sorry, I could not generate a response.' })
   } catch (err) {
     const status =
@@ -166,13 +190,14 @@ chatRouter.post('/', async (req, res) => {
     if (status === 401 || status === 403) {
       res.status(503).json({
         error:
-          'The Groq API key was rejected. Check GROQ_API_KEY in server/.env, then restart the API server.',
+          'The Gemini API key was rejected. Check GEMINI_API_KEY in server/.env and confirm the key belongs to a project with Gemini API access.',
       })
       return
     }
     if (status === 429) {
       res.status(503).json({
-        error: 'The AI assistant is busy right now. Please try again shortly.',
+        error:
+          'Gemini free-tier limits were reached. Please wait and try again later.',
       })
       return
     }

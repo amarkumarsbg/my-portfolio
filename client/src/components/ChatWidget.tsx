@@ -125,7 +125,11 @@ export function ChatWidget() {
               </div>
             ))}
             {loading && (
-              <div className="chat-message chat-message--assistant">
+              <div
+                className="chat-message chat-message--assistant"
+                role="status"
+                aria-label="Amar's assistant is thinking"
+              >
                 <span className="chat-message-avatar">A</span>
                 <div className="chat-message-bubble chat-message-bubble--typing">
                   <span className="chat-typing-dot" />
@@ -172,7 +176,7 @@ export function ChatWidget() {
         <button
           className="chat-widget-toggle"
           onClick={() => setOpen(!open)}
-          aria-label={open ? 'Close chat' : 'Open chat'}
+          aria-label={open ? 'Close chat' : 'Open AI chat'}
         >
           {open ? (
             <svg
